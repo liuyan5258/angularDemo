@@ -1,0 +1,73 @@
+<!doctype html>
+<html ng-app="demoApp">
+  <head>
+    <meta charset="utf-8">
+    <title>inginiteScroll</title>
+    <link rel="stylesheet" href="./styles/main.css">
+    <script>
+    /* Fix viewport*/
+    (function (doc, win) {
+      var docEl = doc.documentElement,
+        isIOS = navigator.userAgent.match(/iphone|ipod|ipad/gi),
+        dpr = isIOS? Math.min(win.devicePixelRatio, 3) : 1,
+        dpr = window.top === window.self? dpr : 1, //被iframe引用时，禁止缩放
+        dpr = 1,
+        scale = 1 / dpr,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize';
+      docEl.dataset.dpr = dpr;
+      var metaEl = doc.createElement('meta');
+      metaEl.name = 'viewport';
+      metaEl.content = 'initial-scale=' + scale + ',maximum-scale=' + scale + ', minimum-scale=' + scale;
+      docEl.firstElementChild.appendChild(metaEl);
+      var recalc = function () {
+          var width = docEl.clientWidth;
+          if (width / dpr > 750) {
+              width = 750 * dpr;
+          }
+          docEl.style.fontSize = 100 * (width / 750) + 'px';
+        };
+      recalc()
+      if (!doc.addEventListener) return;
+      // win.addEventListener(resizeEvt, recalc, false);
+    })(document, window);
+    </script>
+  </head>
+  <body ng-controller="MainCtrl">
+
+    <div infinite-scroll="addItems()" class="scroll-loader" can-load="canLoad" threshold="18" >
+      <div class="dynamic-list" ng-repeat="item in list">
+        <div class="dynamic-child">
+          <div class="dynamic-info">
+            <img ng-src="{{item.protrait}}" alt="">
+            <div class="text-info">
+              <p class="name">{{item.nickName}}</p>
+              <p class="public">{{item.time}} {{item.source}}</p>
+            </div>
+            <div class="attention" ng-class="{cencern : cencern}">
+              <span>{{item.concernNum}}</span><a href="javascript:void(0);" ng-click="cencern=!cencern"></a>
+            </div>
+          </div>
+          <div class="img-box img6-model" ng-if="showSixPic(item.pic)">
+            <img ng-src="{{img.imgSrc}}" alt="" ng-repeat="img in item.pic"/>
+          </div>
+          <div class="img-box img4-model" ng-if="showForePic(item.pic)">
+            <img ng-src="{{img.imgSrc}}" alt="" ng-repeat="img in item.pic"/>
+          </div>
+          <div class="img-box img1-model" ng-if="showOnePic(item.pic)">
+            <img ng-src="{{img.imgSrc}}" alt="" ng-repeat="img in item.pic"/>
+          </div>
+          <div class="img-box imgNone-model" ng-if="showZeroPic(item.pic)">
+          </div>
+          <div class="dynamic-content">
+            {{item.info}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <script src="http://cdn.bootcss.com/angular.js/1.4.3/angular.min.js"></script>
+  <script src="./scripts/angular-touch.min.js"></script>
+  <script src="./scripts/app.js"></script>
+    
+  </body>
+</html>
